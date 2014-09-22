@@ -32,7 +32,7 @@ bind_config:
 
 bind_local_config:
   file.managed:
-    - name: {{ map.local_config }}
+    - name: {{ server.local_config }}
     - source: 'salt://bind/files/redhat/named.conf.local'
     - template: jinja
     - user: {{ server.user }}
@@ -49,7 +49,7 @@ bind_local_config:
 
 bind_config:
   file.managed:
-  - name: {{ map.config }}
+  - name: {{ server.config }}
   - source: 'salt://bind/files/debian/named.conf.Debian'
   - template: jinja
   - user: {{ server.user }}
@@ -62,7 +62,7 @@ bind_config:
 
 bind_local_config:
   file.managed:
-  - name: {{ map.local_config }}
+  - name: {{ server.local_config }}
   - source: 'salt://bind/files/debian/named.conf.local'
   - template: jinja
   - user: {{ server.user }}
@@ -75,7 +75,7 @@ bind_local_config:
 
 bind_options_config:
   file.managed:
-  - name: {{ map.options_config }}
+  - name: {{ server.options_config }}
   - source: 'salt://bind/files/debian/named.conf.options'
   - template: jinja
   - user: {{ server.user }}
@@ -88,7 +88,7 @@ bind_options_config:
 
 bind_default_zones:
   file.managed:
-  - name: {{ map.default_zones_config }}
+  - name: {{ server.default_zones_config }}
   - source: 'salt://bind/files/debian/named.conf.default-zones'
   - template: jinja
   - user: {{ server.user }}
