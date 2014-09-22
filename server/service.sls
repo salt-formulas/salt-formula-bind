@@ -112,19 +112,6 @@ bind_default_zones:
   - user: root
   - group: root
 
-setup_rndc:
-  cmd.run:
-  - name: /usr/sbin/rndc-confgen -r /dev/urandom -a -c {{ server.rndc_key }}
-  - require:
-    - pkg: bind_packages
-
-{{ server.rndc_key }}
-  file.managed:
-  - user: root
-  - mode: 0640
-  - require:
-    - cmd: setup_rndc
-
 {%- endif %}
 
 bind_service:
@@ -134,5 +121,18 @@ bind_service:
   - reload: true
   - require:
     - pkg: bind_packages
+
+setup_rndc:
+  cmd.run:
+  - name: /usr/sbin/rndc-confgen -r /dev/urandom -a -c {{ server.rndc_key }}
+  - require:
+    - pkg: bind_packages
+
+{{ server.rndc_key }}:
+  file.managed:
+  - user: root
+  - mode: 0640
+  - require:
+    - cmd: setup_rndc
 
 {%- endif %}
