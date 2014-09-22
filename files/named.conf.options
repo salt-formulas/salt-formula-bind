@@ -19,3 +19,16 @@ options {
      listen-on-v6 { {{ server.get('ipv6_listen', 'any') }}; };
      {%- endif %}
 };
+
+logging {
+     category default { default_syslog; default_debug; };
+     category unmatched { null; };
+
+    channel query.log {
+        file "/var/log/query.log";
+        // Set the severity to dynamic to see all the debug messages.
+        severity debug 3;
+    };
+
+    category queries { query.log; };
+};
