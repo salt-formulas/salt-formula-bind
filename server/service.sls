@@ -125,6 +125,7 @@ bind_service:
 setup_rndc:
   cmd.run:
   - name: /usr/sbin/rndc-confgen -r /dev/urandom -a -c {{ server.rndc_key }}
+  - unless: test -e {{ server.rndc_key }}
   - require:
     - pkg: bind_packages
 
