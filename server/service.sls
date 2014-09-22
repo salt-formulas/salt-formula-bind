@@ -106,6 +106,11 @@ bind_default_zones:
   - mode: 775
   - template: jinja
 
+/var/log/bind9/query.log:
+  file.managed:
+  - user: {{ server.user }}
+  - group: {{ server.group }}
+
 /etc/logrotate.d/bind9:
   file.managed:
   - source: salt://bind/files/logrotate
