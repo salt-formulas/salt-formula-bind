@@ -3,19 +3,17 @@
 
 ## Sample pillars
 
-  bind:
-    configured_zones:
-      sub.domain.com:
-        type: master
-        notify: False
-      1.168.192.in-addr.arpa:
-        type: master
-        notify: False
+    bind:
+      server:
+        enabled: true
+        zone:
+          sub.domain.com:
+            type: master
+            notify: False
+          1.168.192.in-addr.arpa:
+            type: master
+            notify: False
 
-  available_zones:
-    sub.domain.org:
-      file: db.sub.domain.org
-      masters: "192.168.0.1;"
 
 ## Read more
 
