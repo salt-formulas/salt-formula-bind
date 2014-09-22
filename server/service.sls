@@ -3,7 +3,7 @@
 
 bind_packages:
   pkg.installed:
-  - pkgs: {{ server.pkg }}
+  - pkgs: {{ server.pkgs }}
 
 named_directory:
   file.directory:

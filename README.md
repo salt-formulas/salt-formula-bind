@@ -15,5 +15,3 @@
             notify: False
 
 ## Read more
-
-* 
