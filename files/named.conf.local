@@ -24,8 +24,3 @@ zone "{{ key }}" {
   {%- endif %}
 };
 {% endfor %}
-
-logging {
-  channel "querylog" { file "/var/log/bind9/query.log"; print-time yes; };
-  category queries { querylog; };
-};

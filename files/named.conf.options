@@ -24,11 +24,19 @@ logging {
      category default { default_syslog; default_debug; };
      category unmatched { null; };
 
-    channel query.log {
-        file "/var/log/query.log";
-        // Set the severity to dynamic to see all the debug messages.
-        severity debug 3;
-    };
+     category queries { query.log; };
+     channel query.log {
+          file "/var/named/query.log";
+          print-time yes;
+          severity debug 3;
+     };
 
-    category queries { query.log; };
+     category update { update_log; };
+     channel update_log {
+          file "/var/named/update.log" versions 2 size 20m;
+          print-time yes;
+          print-category yes;
+          print-severity yes;
+          severity info;
+     };
 };
