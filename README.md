@@ -14,7 +14,6 @@
             type: master
             notify: False
 
-
 ## Read more
 
 * 
