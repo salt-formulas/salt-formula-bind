@@ -13,7 +13,7 @@ named_directory:
   - mode: 775
   - makedirs: True
   - require:
-    - pkg: bind
+    - pkg: bind_packages
 
 {%- if grains.os_family == 'RedHat' %}
 
@@ -33,7 +33,7 @@ bind_config:
 bind_local_config:
   file.managed:
     - name: {{ server.local_config }}
-    - source: 'salt://bind/files/redhat/named.conf.local'
+    - source: 'salt://bind/files/named.conf.local'
     - template: jinja
     - user: {{ server.user }}
     - group: {{ server.group }}
@@ -50,7 +50,7 @@ bind_local_config:
 bind_config:
   file.managed:
   - name: {{ server.config }}
-  - source: 'salt://bind/files/debian/named.conf.Debian'
+  - source: 'salt://bind/files/named.conf.Debian'
   - template: jinja
   - user: {{ server.user }}
   - group: {{ server.group }}
@@ -63,7 +63,7 @@ bind_config:
 bind_local_config:
   file.managed:
   - name: {{ server.local_config }}
-  - source: 'salt://bind/files/debian/named.conf.local'
+  - source: 'salt://bind/files/named.conf.local'
   - template: jinja
   - user: {{ server.user }}
   - group: {{ server.group }}
@@ -76,7 +76,7 @@ bind_local_config:
 bind_options_config:
   file.managed:
   - name: {{ server.options_config }}
-  - source: 'salt://bind/files/debian/named.conf.options'
+  - source: 'salt://bind/files/named.conf.options'
   - template: jinja
   - user: {{ server.user }}
   - group: {{ server.group }}
@@ -89,7 +89,7 @@ bind_options_config:
 bind_default_zones:
   file.managed:
   - name: {{ server.default_zones_config }}
-  - source: 'salt://bind/files/debian/named.conf.default-zones'
+  - source: 'salt://bind/files/named.conf.default-zones'
   - template: jinja
   - user: {{ server.user }}
   - group: {{ server.group }}
