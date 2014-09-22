@@ -1,5 +1,5 @@
 
 include:
-{% if pillar.bind.server is defined %}
+{%- if pillar.bind.server is defined %}
 - bind.server
-{% endif %}
+{%- endif %}
