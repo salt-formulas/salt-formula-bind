@@ -9,11 +9,17 @@
         zone:
           sub.domain.com:
             type: master
-            notify: False
+            notify: false
+            records:
+            - name: @
+              type: A
+              ttl: 7200
+              value: 192.168.0.5
           1.168.192.in-addr.arpa:
             type: master
-            notify: False
+            notify: false
 
 ## Read more
 
+* https://github.com/theforeman/puppet-dns
 * https://help.ubuntu.com/community/BIND9ServerHowto

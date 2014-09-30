@@ -99,14 +99,14 @@ bind_default_zones:
   - watch_in:
     - service: bind_service
 
-/var/log/bind9:
+/var/log/named:
   file.directory:
   - user: {{ server.user }}
   - group: {{ server.group }}
   - mode: 775
   - template: jinja
 
-/var/log/bind9/query.log:
+/var/log/named/query.log:
   file.managed:
   - user: {{ server.user }}
   - group: {{ server.group }}

@@ -26,14 +26,14 @@ logging {
 
      category queries { query.log; };
      channel query.log {
-          file "/var/named/query.log";
+          file "/var/log/named/query.log";
           print-time yes;
           severity debug 3;
      };
 
      category update { update_log; };
      channel update_log {
-          file "/var/named/update.log" versions 2 size 20m;
+          file "/var/log/named/update.log" versions 2 size 20m;
           print-time yes;
           print-category yes;
           print-severity yes;
