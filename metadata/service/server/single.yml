@@ -1,0 +1,6 @@
+applications:
+- bind
+parameters:
+  bind:
+    server:
+      enabled: true
