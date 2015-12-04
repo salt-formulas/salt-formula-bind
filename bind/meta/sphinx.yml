@@ -1,0 +1,9 @@
+doc:
+  name: Bind
+  description: Bind DNS service.
+  role:
+  {%- if pillar.bind.server is defined %}
+    server:
+      name: server
+      param: {}
+  {%- endif %}
