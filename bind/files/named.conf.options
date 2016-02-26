@@ -1,43 +1,48 @@
-{%- from "bind/map.jinja" import server with context %}
+{%- from "bind/map.jinja" import server with context -%}
 options {
-     directory "/var/cache/bind";
-     // If there is a firewall between you and nameservers you want
-     // to talk to, you may need to fix the firewall to allow multiple
-     // ports to talk. See http://www.kb.cert.org/vuls/id/800113
+     directory "{{ server.named_dir }}";
 
-     // If your ISP provided one or more IP addresses for stable
-     // nameservers, you probably want to use them as forwarders.
-     // Uncomment the following block, and insert the addresses replacing
-     // the all-0's placeholder.
+     {%- if server.forwarders is defined %}
+     forwarders {
+          {%- for forwarder in server.forwarders %}
+          {{ forwarder }};
+          {%- endfor %}
+     };
+     {%- endif %}
 
-     // forwarders {
-     // 0.0.0.0;
-     // };
+     {%- if server.get('dnssec', {}).get('enabled', True) %}
+     dnssec-enable yes;
+     {%- else %}
+     dnssec-enable no;
+     {%- endif %}
+     {%- if server.get('dnssec', {}).get('validation', True) %}
+     dnssec-validation yes;
+     {%- else %}
+     dnssec-enable no;
+     {%- endif %}
 
      auth-nxdomain no; # conform to RFC1035
-     {%- if server.get('ipv6_enabled', 'False') %}
+     {%- if server.get('ipv6_enabled', True) %}
      listen-on-v6 { {{ server.get('ipv6_listen', 'any') }}; };
+     {%- endif %}
+
+     {%- if server.get('version', 'hidden') != True %}
+     version: "{{ server.get('version', 'hidden') }}";
+     {%- endif %}
+
+     {%- if server.get('recursion', False) != False %}
+     allow-recursion {
+          {%- if server.recursion.hosts is defined %}
+          {%- for host in server.recursion.hosts %}
+          {{ host }};
+          {%- endfor %}
+          {%- else %}
+          any;
+          {%- endif %}
+     };
      {%- endif %}
 };
 
-logging {
-     category default { default_syslog; default_debug; };
-     category unmatched { null; };
-
-     category queries { query.log; };
-     channel query.log {
-          file "/var/log/named/query.log";
-          print-time yes;
-          severity debug 3;
-     };
-
-     category update { update_log; };
-     channel update_log {
-          file "/var/log/named/update.log" versions 2 size 20m;
-          print-time yes;
-          print-category yes;
-          print-severity yes;
-          severity info;
-     };
-
-};
+{#-
+  vim: syntax=jinja
+#}

@@ -1,26 +1,24 @@
-//
-// Do any local configuration here
-//
+{%- from "bind/map.jinja" import server with context -%}
 
-// Consider adding the 1918 zones here, if they are not used in your
-// organization
-//include "/etc/bind/zones.rfc1918";
+{%- for name, zone in server.get('zone', {}) %}
 
-{% for key,args in salt['pillar.get']('bind:configured_zones', {}).iteritems() -%}
-{%- set file = salt['pillar.get']("available_zones:" + key + ":file") %}
-{%- set masters = salt['pillar.get']("available_zones:" + key + ":masters") %}
-zone "{{ key }}" {
-  type {{ args['type'] }};
-  file "zones/{{ file }}";
-  {% if args['type'] == "master" -%}
-    {% if args['notify'] -%}
-  notify yes;
-    {% else -%}
-  notify no;
-    {%- endif -%}
-  {% else -%}
-  notify no;
-  masters { {{ masters }} };
-  {%- endif %}
-};
-{% endfor %}
+zone "{{ name }}" {
+    type {{ zone.get('type', 'master') }};
+    file {{ server.zones_dir }}/{{ name }}.conf;
+
+    {%- if zone.get('type', 'master') != 'master' %}
+    notify {% 'yes' if zone.get('notify', False) else 'no' %};
+    {%- if zone.masters is defined %}
+    masters {
+    {%- for master in zone.masters %}
+    {{ master }};
+    };
+    {%- endif %}
+    {%- endif %}
+}
+
+{%- endfor %}
+
+{#-
+  vim: syntax=jinja
+#}

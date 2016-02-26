@@ -8,21 +8,19 @@ bind_packages:
 named_directory:
   file.directory:
   - name: {{ server.named_dir }}
-  - user: {{ server.user }}
+  - user: root
   - group: {{ server.group }}
   - mode: 775
   - makedirs: True
   - require:
     - pkg: bind_packages
 
-{%- if grains.os_family == 'RedHat' %}
-
 bind_config:
   file.managed:
   - name: {{ server.config }}
-  - source: 'salt://bind/files/named.conf.RedHat'
+  - source: 'salt://bind/files/named.conf.{{ grains.os_family }}'
   - template: jinja
-  - user: {{ server.user }}
+  - user: root
   - group: {{ server.group }}
   - mode: 640
   - require:
@@ -30,42 +28,14 @@ bind_config:
   - watch_in:
     - service: bind_service
 
-bind_local_config:
-  file.managed:
-    - name: {{ server.local_config }}
-    - source: 'salt://bind/files/named.conf.local'
-    - template: jinja
-    - user: {{ server.user }}
-    - group: {{ server.group }}
-    - mode: 644
-    - require:
-      - pkg: bind_packages
-    - watch_in:
-      - service: bind_service
-
-{%- endif %}
-
 {%- if grains['os_family'] == 'Debian' %}
 
-bind_config:
+bind_config_local:
   file.managed:
-  - name: {{ server.config }}
-  - source: 'salt://bind/files/named.conf.Debian'
-  - template: jinja
-  - user: {{ server.user }}
-  - group: {{ server.group }}
-  - mode: 644
-  - require:
-    - pkg: bind_packages
-  - watch_in:
-    - service: bind_service
-
-bind_local_config:
-  file.managed:
-  - name: {{ server.local_config }}
+  - name: {{ server.config_local }}
   - source: 'salt://bind/files/named.conf.local'
   - template: jinja
-  - user: {{ server.user }}
+  - user: root
   - group: {{ server.group }}
   - mode: 644
   - require:
@@ -73,49 +43,18 @@ bind_local_config:
   - watch_in:
     - service: bind_service
 
-bind_options_config:
+bind_config_options:
   file.managed:
-  - name: {{ server.options_config }}
+  - name: {{ server.config_options }}
   - source: 'salt://bind/files/named.conf.options'
   - template: jinja
-  - user: {{ server.user }}
-  - group: {{ server.group }}
-  - mode: 644
-  - require:
-    - pkg: bind_packages
-  - watch_in:
-    - service: bind_service
-
-bind_default_zones:
-  file.managed:
-  - name: {{ server.default_zones_config }}
-  - source: 'salt://bind/files/named.conf.default-zones'
-  - template: jinja
-  - user: {{ server.user }}
-  - group: {{ server.group }}
-  - mode: 644
-  - require:
-    - pkg: bind_packages
-  - watch_in:
-    - service: bind_service
-
-/var/log/named:
-  file.directory:
-  - user: {{ server.user }}
-  - group: {{ server.group }}
-  - mode: 775
-  - template: jinja
-
-/var/log/named/query.log:
-  file.managed:
-  - user: {{ server.user }}
-  - group: {{ server.group }}
-
-/etc/logrotate.d/bind9:
-  file.managed:
-  - source: salt://bind/files/logrotate
   - user: root
-  - group: root
+  - group: {{ server.group }}
+  - mode: 644
+  - require:
+    - pkg: bind_packages
+  - watch_in:
+    - service: bind_service
 
 {%- endif %}
 
@@ -126,19 +65,5 @@ bind_service:
   - reload: true
   - require:
     - pkg: bind_packages
-
-setup_rndc:
-  cmd.run:
-  - name: /usr/sbin/rndc-confgen -r /dev/urandom -a -c {{ server.rndc_key }}
-  - unless: test -e {{ server.rndc_key }}
-  - require:
-    - pkg: bind_packages
-
-{{ server.rndc_key }}:
-  file.managed:
-  - user: root
-  - mode: 0640
-  - require:
-    - cmd: setup_rndc
 
 {%- endif %}
