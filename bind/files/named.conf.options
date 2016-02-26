@@ -27,7 +27,7 @@ options {
      {%- endif %}
 
      {%- if server.get('version', 'hidden') != True %}
-     version: "{{ server.get('version', 'hidden') }}";
+     version "{{ server.get('version', 'hidden') }}";
      {%- endif %}
 
      {%- if server.get('recursion', False) != False %}

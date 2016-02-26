@@ -4,18 +4,19 @@
 
 zone "{{ name }}" {
     type {{ zone.get('type', 'master') }};
-    file {{ server.zones_dir }}/db.{{ name }};
+    file "{{ server.zones_dir }}/db.{{ name }}";
 
     {%- if zone.get('type', 'master') != 'master' %}
-    notify {% 'yes' if zone.get('notify', False) else 'no' %};
+    notify {{ 'yes' if zone.get('notify', False) else 'no' }};
     {%- if zone.masters is defined %}
     masters {
     {%- for master in zone.masters %}
-    {{ master }};
+        {{ master }};
+    {%- endfor %}
     };
     {%- endif %}
     {%- endif %}
-}
+};
 
 {%- endfor %}
 
