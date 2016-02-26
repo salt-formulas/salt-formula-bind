@@ -22,8 +22,9 @@ bind:
         type: slave
         notify: true
         masters:
-          - dns01.domain.com
-          - dns02.domain.com
+          # Masters must be specified by IP address
+          - 8.8.8.8
+          - 8.8.4.4
     dnssec:
       enabled: true
       validation: true

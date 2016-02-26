@@ -1,0 +1,23 @@
+{%- from "bind/map.jinja" import server with context -%}
+{%- for name, zone in server.zone.iteritems() if name == zone_name %}
+$ORIGIN {{ name }}
+$TTL {{ zone.get('ttl', '86400') }}
+
+{{ name }}		IN SOA	{{ name }}. {{ zone.get('root', 'hostmaster.'+name)|replace('@', '.') }}. (
+				1        ; serial
+				{{ zone.get('refresh', 604800) }}
+				{{ zone.get('retry', 86400) }}
+				{{ zone.get('expire', 2419200) }}
+				{{ zone.get('minimum', 86400) }}
+				)
+
+{%- for record in zone.get('records', []) %}
+{{ record.get('name', '@') }} {{ record.get('ttl', '') }} {{ type }} {% if type in ['TXT', 'SPF'] %}"{{ value }}"{% else %}{{ value }}{% endif %}
+{%- endfor %}
+{%- endfor %}
+
+{%- endfor %}
+
+{#-
+  vim: syntax=jinja
+#}
