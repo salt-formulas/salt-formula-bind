@@ -1,0 +1,8 @@
+name: bind
+os: Debian, RedHat
+os_family: Debian, RedHat
+version: 201606
+release: 1
+summary: bind salt formula
+description: Install and configure bind system.
+top_level_dir: bind
