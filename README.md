@@ -10,6 +10,10 @@
           keyname:
             secret: xyz
             algorithm: hmac-sha512
+        server:
+          8.8.8.8:
+            keys:
+              - keyname
         zone:
           sub.domain.com:
             ttl: 86400

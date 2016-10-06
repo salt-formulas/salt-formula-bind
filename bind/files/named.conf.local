@@ -27,6 +27,18 @@ key "{{ keyname }}" {
 };
 {%- endfor %}
 
+{%- for serverip, server in server.get('server', {}).iteritems() %}
+server {{ serverip }} {
+    {%- if server.keys is defined %}
+    keys {
+        {%- for key in server.keys %}
+        {{ key }};
+        {%- endfor %}
+    };
+    {%- endif %}
+};
+{%- endfor %}
+
 {#-
   vim: syntax=jinja
 #}
