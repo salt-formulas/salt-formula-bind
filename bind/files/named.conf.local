@@ -29,9 +29,9 @@ key "{{ keyname }}" {
 
 {%- for serverip, server in server.get('server', {}).iteritems() %}
 server {{ serverip }} {
-    {%- if server.keys is defined %}
+    {%- if server.get('keys', None) %}
     keys {
-        {%- for key in server.keys %}
+        {%- for key in server.get('keys') %}
         {{ key }};
         {%- endfor %}
     };
