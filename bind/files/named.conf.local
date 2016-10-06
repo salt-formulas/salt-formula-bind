@@ -20,6 +20,13 @@ zone "{{ name }}" {
 
 {%- endfor %}
 
+{%- for keyname, key in server.get('key', {}).iteritems() %}
+key "{{ keyname }}" {
+    algorithm {{ key.algorithm }};
+    secret "{{ key.secret }}";
+};
+{%- endfor %}
+
 {#-
   vim: syntax=jinja
 #}

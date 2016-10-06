@@ -6,6 +6,10 @@
     bind:
       server:
         enabled: true
+        key:
+          keyname:
+            secret: xyz
+            algorithm: hmac-sha512
         zone:
           sub.domain.com:
             ttl: 86400
