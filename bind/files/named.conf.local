@@ -6,8 +6,6 @@ zone "{{ name }}" {
     type {{ zone.get('type', 'master') }};
     file "{{ server.zones_dir }}/db.{{ name }}";
 
-    {%- if zone.get('type', 'master') != 'master' %}
-    notify {{ 'yes' if zone.get('notify', False) else 'no' }};
     {%- if zone.masters is defined %}
     masters {
     {%- for master in zone.masters %}
@@ -15,7 +13,17 @@ zone "{{ name }}" {
     {%- endfor %}
     };
     {%- endif %}
-    {%- endif %}
+    notify {{ 'yes' if zone.get('notify', False) else 'no' }};
+    allow-query {
+        {%- for query in zone.get('query', ['any']) %}
+        {{ query }};
+        {%- endfor %}
+    };
+    allow-transfer {
+        {%- for transfer in zone.get('transfer', ['none']) %}
+        {{ transfer }};
+        {%- endfor %}
+    };
 };
 
 {%- endfor %}
