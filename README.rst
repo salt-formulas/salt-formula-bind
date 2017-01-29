@@ -1,7 +1,14 @@
 
-# Bind DNS service
+============
+Bind formula
+============
 
-## Sample pillars
+BIND is open source software that enables you to publish your Domain Name System (DNS) information on the Internet, and to resolve DNS queries for your users. The name BIND stands for “Berkeley Internet Name Domain”, because the software originated in the early 1980s at the University of California at Berkeley.
+
+Sample pillars
+==============
+
+.. code-block:: yaml
 
     bind:
       server:
@@ -43,7 +50,9 @@
           hosts:
             - localhost
 
-## Read more
+Read more
+=========
 
 * https://github.com/theforeman/puppet-dns
 * https://help.ubuntu.com/community/BIND9ServerHowto
+* https://www.isc.org/downloads/bind/
