@@ -26,6 +26,22 @@ options {
      listen-on-v6 { {{ server.get('ipv6_listen', 'any') }}; };
      {%- endif %}
 
+     {%- if server.get('allow_new_zones', False) %}
+     allow-new-zones yes;
+     {%- endif %}
+
+     {%- if server.get('query', False) %}
+     allow-query {
+          {%- if server.query.hosts is defined %}
+          {%- for host in server.query.hosts %}
+          {{ host }};
+          {%- endfor %}
+          {%- else %}
+          any;
+          {%- endif %}
+     };
+     {%- endif %}
+
      {%- if server.get('version', 'hidden') != True %}
      version "{{ server.get('version', 'hidden') }}";
      {%- endif %}
