@@ -21,3 +21,11 @@
     'group': 'named'
   },
 }, merge=salt['pillar.get']('bind:server')) %}
+
+{%- set client = salt['grains.filter_by']({
+  'Debian': {
+    'pkgs': ['bind9utils'],
+    'rndc_config': '/etc/rndc.conf',
+    'rndc_key': '/etc/bind/rndc.key',
+  },
+}, merge=salt['pillar.get']('bind:client')) %}

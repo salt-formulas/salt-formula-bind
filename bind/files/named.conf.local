@@ -28,24 +28,33 @@ zone "{{ name }}" {
 
 {%- endfor %}
 
-{%- for keyname, key in server.get('key', {}).iteritems() %}
-key "{{ keyname }}" {
-    algorithm {{ key.algorithm }};
-    secret "{{ key.secret }}";
-};
-{%- endfor %}
+{%- set _keys = server.get('key', {}) %}
+{%- include "bind/files/_keys.conf" %}
 
-{%- for serverip, server in server.get('server', {}).iteritems() %}
-server {{ serverip }} {
-    {%- if server.get('keys', None) %}
+{%- set _servers = server.get('server', {}) %}
+{%- include "bind/files/_servers.conf" %}
+
+{%- if server.get('control') %}
+controls {
+    {%- for name, control in server.control.iteritems() if control.get('enabled', True) %}
+    inet {{ control.get('bind', {}).get('address', '127.0.0.1') }} port {{ control.get('bind', {}).get('port', 953) }}
+    {%- if control.get('allow') %}
+    allow {
+        {%- for allow in control.allow %}
+        {{ allow }};
+        {%- endfor %}
+    }
+    {%- endif %}
+    {%- if control.get('keys') %}
     keys {
-        {%- for key in server.get('keys') %}
+        {%- for key in control.get('keys') %}
         {{ key }};
         {%- endfor %}
-    };
-    {%- endif %}
+    }
+    {%- endif %};
+    {%- endfor %}
 };
-{%- endfor %}
+{%- endif %}
 
 {#-
   vim: syntax=jinja

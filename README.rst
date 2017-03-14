@@ -8,6 +8,9 @@ BIND is open source software that enables you to publish your Domain Name System
 Sample pillars
 ==============
 
+Server
+------
+
 .. code-block:: yaml
 
     bind:
@@ -21,6 +24,16 @@ Sample pillars
           8.8.8.8:
             keys:
               - keyname
+        control:
+          local:
+            enabled: true
+            bind:
+              address: 127.0.0.1
+              port: 953
+            allow:
+              - 127.0.0.1
+            keys:
+              - xyz
         zone:
           sub.domain.com:
             ttl: 86400
@@ -49,6 +62,34 @@ Sample pillars
         recursion:
           hosts:
             - localhost
+
+You can use following command to generate key:
+
+.. code-block:: bash
+
+    dnssec-keygen -a HMAC-SHA512 -b 512 -n HOST -r /dev/urandom mykey
+
+Client
+------
+
+.. code-block:: yaml
+
+    bind:
+      client:
+        enabled: true
+        option:
+          default:
+            server: localhost
+            port: 953
+            key: keyname
+        key:
+          keyname:
+            secret: xyz
+            algorithm: hmac-sha512
+        server:
+          8.8.8.8:
+            keys:
+              - keyname
 
 Read more
 =========
