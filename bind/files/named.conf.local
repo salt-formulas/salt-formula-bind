@@ -47,6 +47,28 @@ server {{ serverip }} {
 };
 {%- endfor %}
 
+{%- if server.get('control') %}
+controls {
+    {%- for name, control in server.control.iteritems() if control.get('enabled', True) %}
+    inet {{ control.get('bind', {}).get('address', '127.0.0.1') }} port {{ control.get('bind', {}).get('port', 953) }}
+    {%- if control.get('allow') %}
+    allow {
+        {%- for allow in control.allow %}
+        {{ allow }};
+        {%- endfor %}
+    }
+    {%- endif %}
+    {%- if control.get('keys') %}
+    keys {
+        {%- for key in control.get('keys') %}
+        {{ key }};
+        {%- endfor %}
+    }
+    {%- endif %};
+    {%- endfor %}
+};
+{%- endif %}
+
 {#-
   vim: syntax=jinja
 #}
