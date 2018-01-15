@@ -10,6 +10,6 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-bind.git
 
 Package: salt-formula-bind
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass
+Depends: ${misc:Depends}
 Description: bind salt formula
  Install and configure bind system.
