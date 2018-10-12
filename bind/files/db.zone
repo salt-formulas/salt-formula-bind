@@ -1,10 +1,10 @@
 {%- from "bind/map.jinja" import server with context -%}
-{%- for name, zone in server.zone.iteritems() if name == zone_name %}
-$ORIGIN {{ name }}
+{%- set zone = server.zone.get(zone_name, {}) -%}
+$ORIGIN {{ zone_name }}.
 $TTL {{ zone.get('ttl', '86400') }}
 
-{{ name }}              IN SOA  {{ name }}. {{ zone.get('root', 'hostmaster.'+name)|replace('@', '.') }}. (
-                                {{ zone.get('serial', 1) }}
+@ IN SOA  {{ zone.get('ns', zone_name) }} {{ zone.get('root', 'hostmaster.'+zone_name)|replace('@', '.') }}. (
+                                {{ salt['grains.get']('dnsserial', 1) }}
                                 {{ zone.get('refresh', 604800) }}
                                 {{ zone.get('retry', 86400) }}
                                 {{ zone.get('expire', 2419200) }}
@@ -12,13 +12,20 @@ $TTL {{ zone.get('ttl', '86400') }}
                                 )
 
 {%- for record in zone.get('records', []) %}
-{{ record.get('name', '@') }} {{ record.get('ttl', '') }} 
-{%- for type in record.get('type', []) %}
-{{ type }} {% if type in ['TXT', 'SPF'] %}"{{ record.get('value', []) }}"{% else %}{{ record.get('value', []) }}{% endif %}
+{%- set type = record.get('type', 'A') %}
+{{ record.get('name', '@') }} {{ record.get('ttl', '') }} IN {{ type }} {% if type in ['TXT', 'SPF'] %}"{{ record.get('value', []) }}"{% else %}{{ record.get('value', []) }}{% endif %}
+{%- endfor %}
+{#- Automatic records from salt mine #}
+{%- if zone.get('auto_records', False) %}
+{%- for grains in salt['mine.get']('*', 'grains.items').values() %}
+{%- for record in grains.get('dns_records', []) %}
+{%- for name in record.get('names', []) if '.' in name and name.split('.',1)[1] == zone_name %}
+{{ name.split('.',1)[0] }} IN A {{ record.get('address', '127.0.0.1') }}
 {%- endfor %}
 {%- endfor %}
 {%- endfor %}
+{%- endif %}
 
 {#-
-  vim: syntax=jinja
+  vim: ft=jinja
 #}

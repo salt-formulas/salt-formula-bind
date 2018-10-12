@@ -11,6 +11,11 @@ zones_directory:
   - require:
     - file: named_directory
 
+dnsserial_increment:
+  grains.present:
+  - name: dnsserial
+  - value: {{ salt['grains.get']('dnsserial', 1) + 1 }}
+
 {%- for name, zone in server.zone.iteritems() %}
 {%- if zone.get('type', 'master') == 'master' %}
 {# Slave zone files will be created by bind #}
