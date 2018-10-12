@@ -44,6 +44,8 @@ Server
               type: A
               ttl: 7200
               value: 192.168.0.5
+            auto_records: true
+            # Allow autoload of host records from salt mine.
           1.168.192.in-addr.arpa:
             type: master
             notify: false
