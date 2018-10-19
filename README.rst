@@ -39,13 +39,18 @@ Server
             ttl: 86400
             root: "hostmaster@domain.com"
             type: master
+            ns: zone.name.server.
+            refresh: 43200
+            retry: 180
+            expire: 1209600
+            nxttl: 10
             records:
             - name: @
               type: A
               ttl: 7200
               value: 192.168.0.5
-            auto_records: true
             # Allow autoload of host records from salt mine.
+            auto_records: true
           1.168.192.in-addr.arpa:
             type: master
             notify: false
