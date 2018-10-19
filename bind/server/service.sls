@@ -62,7 +62,6 @@ bind_service:
   service.running:
   - name: {{ server.service }}
   - enable: true
-  - reload: true
   - require:
     - pkg: bind_packages
 

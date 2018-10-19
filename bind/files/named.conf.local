@@ -26,7 +26,7 @@ zone "{{ name }}" {
     };
 {%- if zone.get('auto_records', False) %}
     allow-update {
-        127.0.0.1;
+        localhost;
     };
 {%- endif %}
 };

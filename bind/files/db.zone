@@ -1,14 +1,14 @@
 {%- from "bind/map.jinja" import server with context -%}
 {%- set zone = server.zone.get(zone_name, {}) -%}
 $ORIGIN {{ zone_name }}.
-$TTL {{ zone.get('ttl', '86400') }}
+$TTL {{ zone.get('ttl', '300') }}
 
 @ IN SOA  {{ zone.get('ns', zone_name) }} {{ zone.get('root', 'hostmaster.'+zone_name)|replace('@', '.') }}. (
                                 {{ salt['grains.get']('dnsserial', 1) }}
-                                {{ zone.get('refresh', 604800) }}
-                                {{ zone.get('retry', 86400) }}
-                                {{ zone.get('expire', 2419200) }}
-                                {{ zone.get('minimum', 86400) }}
+                                {{ zone.get('refresh', 43200) }}
+                                {{ zone.get('retry', 180) }}
+                                {{ zone.get('expire', 1209600) }}
+                                {{ zone.get('nxttl', 10) }}
                                 )
 
 {%- for record in zone.get('records', []) %}
