@@ -62,8 +62,20 @@ bind_service:
   service.running:
   - name: {{ server.service }}
   - enable: true
-  - reload: true
   - require:
     - pkg: bind_packages
+
+bind_service_reload:
+  file.managed:
+  - name: /etc/systemd/system/bind9.service.d/reload.conf
+  - source: 'salt://bind/files/reload.conf'
+  - user: root
+  - group: root
+  - mode: 644
+  - makedirs: True
+  module.run:
+  - name: service.systemctl_reload
+  - onchanges:
+    - file: bind_service_reload
 
 {%- endif %}

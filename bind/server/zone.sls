@@ -11,9 +11,24 @@ zones_directory:
   - require:
     - file: named_directory
 
+dnsserial_increment:
+  grains.present:
+  - name: dnsserial
+  - value: {{ salt['grains.get']('dnsserial', 1) + 1000 }}
+
+bind_service_stop:
+  service.dead:
+  - name: {{ server.service }}
+
 {%- for name, zone in server.zone.iteritems() %}
 {%- if zone.get('type', 'master') == 'master' %}
-{# Slave zone files will be created by bind #}
+{#- Slave zone files will be created by bind #}
+
+bind_zone_{{ name }}_jnl:
+  file.absent:
+  - name: {{ server.zones_dir }}/db.{{ name }}.jnl
+  - require:
+    - service: bind_service_stop
 
 bind_zone_{{ name }}:
   file.managed:
@@ -25,12 +40,14 @@ bind_zone_{{ name }}:
   - mode: 640
   - require:
     - file: zones_directory
-  - watch_in:
-    - service: bind_service
   - defaults:
       zone_name: {{ name }}
 
 {%- endif %}
 {%- endfor %}
+
+bind_service_start:
+  service.running:
+  - name: {{ server.service }}
 
 {%- endif %}
