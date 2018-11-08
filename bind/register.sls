@@ -1,5 +1,4 @@
-send_register_event:
+send_dns_register_event:
   event.send:
   - name: dns/node/register
-  - with_grains:
-    - dns_records
+  - net_info: {{ pillar.linux.network.get('host', {}) }}
