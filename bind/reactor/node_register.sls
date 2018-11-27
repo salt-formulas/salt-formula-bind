@@ -4,14 +4,15 @@
 {%- set hostname, domain = name.split('.',1) %}
 
 bind_node_register_{{ name }}_{{ loop.index }}:
-  local.ddns.add_host:
-  - tgt: bind:server:zone:{{ domain }}:type:master
-  - tgt_type: pillar
+  runner.ddns.add_host:
   - args:
     - zone: {{ domain }}
     - name: {{ hostname }}
     - ttl: {{ client.get('ddns_ttl', 300) }}
     - ip: {{ record.get('address', '127.0.0.127') }}
-
+    - keyname: salt-updates
+    - keyfile: /etc/salt/dns.keyring
+    - nameserver: 172.28.112.131
+    - keyalgorithm: 'HMAC-MD5.SIG-ALG.REG.INT'
 {%- endfor %}
 {%- endfor %}
