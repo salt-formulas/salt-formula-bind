@@ -22,12 +22,9 @@
 }, merge=salt['pillar.get']('bind:server')) %}
 
 {%- set client = salt['grains.filter_by']({
-  'defaults': {
-    'ddns_ttl': 300
-  },
   'Debian': {
     'pkgs': ['bind9utils'],
-    'rndc_config': '/etc/rndc.conf',
+    'rndc_config': '/etc/bind/rndc.conf',
     'rndc_key': '/etc/bind/rndc.key',
   },
-}, merge=salt['pillar.get']('bind:client'), base='defaults') %}
+}, merge=salt['pillar.get']('bind:client')) %}

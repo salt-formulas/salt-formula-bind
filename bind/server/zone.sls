@@ -8,31 +8,26 @@ zones_directory:
   - group: {{ server.group }}
   - mode: 775
   - makedirs: True
-  - require:
-    - file: named_directory
 
 dnsserial_increment:
   grains.present:
   - name: dnsserial
   - value: {{ salt['grains.get']('dnsserial', 1) + 1000 }}
 
-bind_service_stop:
-  service.dead:
-  - name: {{ server.service }}
-
 {%- for name, zone in server.zone.iteritems() %}
 {%- if zone.get('type', 'master') == 'master' %}
 {#- Slave zone files will be created by bind #}
 
-bind_zone_{{ name }}_jnl:
-  file.absent:
-  - name: {{ server.zones_dir }}/db.{{ name }}.jnl
-  - require:
-    - service: bind_service_stop
+{%- if salt['file.file_exists'](server.zones_dir + '/db.' + name + '.jnl') %}
+bind_zone_{{ name }}_sync:
+  cmd.run:
+  - name: rndc sync -clean {{ name }}
+{%- endif %}
 
 bind_zone_{{ name }}:
   file.managed:
   - name: {{ server.zones_dir }}/db.{{ name }}
+  - replace: False
   - source: 'salt://bind/files/db.zone'
   - template: jinja
   - user: root
@@ -42,12 +37,14 @@ bind_zone_{{ name }}:
     - file: zones_directory
   - defaults:
       zone_name: {{ name }}
+  - watch_in:
+      service: bind_service_reload
 
 {%- endif %}
 {%- endfor %}
 
-bind_service_start:
+bind_service_reload:
   service.running:
   - name: {{ server.service }}
-
+  - reload: True
 {%- endif %}

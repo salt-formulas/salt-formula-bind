@@ -1,5 +1,8 @@
 {%- from "bind/map.jinja" import server with context -%}
 
+{%- set _keys = server.get('key', {}) %}
+{%- include "bind/files/_keys.conf" %}
+
 {%- for name, zone in server.get('zone', {}).iteritems() %}
 
 zone "{{ name }}" {
@@ -27,14 +30,14 @@ zone "{{ name }}" {
 {%- if zone.get('auto_records', False) %}
     allow-update {
         localhost;
+        {%- if server.get('update_key', False) %}
+        key "{{ server.get('update_key') }}";
+        {%- endif %}
     };
 {%- endif %}
 };
 
 {%- endfor %}
-
-{%- set _keys = server.get('key', {}) %}
-{%- include "bind/files/_keys.conf" %}
 
 {%- set _servers = server.get('server', {}) %}
 {%- include "bind/files/_servers.conf" %}
